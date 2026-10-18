@@ -9,6 +9,9 @@ Interactive API documentation: http://localhost:8000/docs
 docker stop telecom-churn-container
 docker rm telecom-churn-container
 
+python -m streamlit run src/dashboard/app.py
+
+
 **Add**
 1. **Step 2, threshold:** pick by cost, not only F1. Example: missed churner cost more than wasted discount. Show cost curve in dashboard. Data scientist roles love this.
 2. **Step 4, promotion gate:** challenger replace champion only if win on holdout. Keep model versions, allow rollback. This is the "self-retraining" claim. Without gate, it just scheduled retrain.

@@ -3,6 +3,8 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
+RUN mkdir -p /app/logs /app/reports/drift
+
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
