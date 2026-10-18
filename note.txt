@@ -5,7 +5,7 @@ docker run -d --name telecom-churn-container -p 8000:8000 telecom-churn-api
 API home: http://localhost:8000/
 Health check: http://localhost:8000/health
 Interactive API documentation: http://localhost:8000/docs
-
+ d
 docker stop telecom-churn-container
 docker rm telecom-churn-container
 
