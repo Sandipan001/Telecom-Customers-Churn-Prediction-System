@@ -1,0 +1,35 @@
+{
+  "model_name": "Logistic Regression",
+  "decision_threshold": 0.16,
+  "validation_f1": 0.6285714285714286,
+  "validation_roc_auc": 0.8360471724921854,
+  "features": [
+    "gender",
+    "SeniorCitizen",
+    "Partner",
+    "Dependents",
+    "tenure",
+    "PhoneService",
+    "MultipleLines",
+    "InternetService",
+    "OnlineSecurity",
+    "OnlineBackup",
+    "DeviceProtection",
+    "TechSupport",
+    "StreamingTV",
+    "StreamingMovies",
+    "Contract",
+    "PaperlessBilling",
+    "PaymentMethod",
+    "MonthlyCharges",
+    "TotalCharges"
+  ],
+  "target_mapping": {
+    "No": 0,
+    "Yes": 1
+  },
+  "validation_business_cost": 8925.0,
+  "promotion_reason": "Lower holdout business cost while satisfying the ROC-AUC guardrail.",
+  "promoted_at": "2026-10-18T23:05:50.977113+00:00",
+  "model_version": "20261018_230550"
+}

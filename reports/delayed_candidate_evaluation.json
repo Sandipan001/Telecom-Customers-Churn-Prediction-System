@@ -1,0 +1,23 @@
+{
+  "evaluation_dataset": "data/processed/delayed_label_holdout.csv",
+  "holdout_customers": 1409,
+  "holdout_used_for_training": false,
+  "candidate_training_batch": 5,
+  "candidate_training_labels": 1500,
+  "candidate": {
+    "threshold": 0.5,
+    "f1_score": 0.6080508474576272,
+    "roc_auc": 0.8354310367098091
+  },
+  "champion": {
+    "threshold": 0.35,
+    "f1_score": 0.617169373549884,
+    "roc_auc": 0.8430261696246352
+  },
+  "comparison": {
+    "candidate_f1_minus_champion_f1": -0.009118526092256829,
+    "candidate_auc_minus_champion_auc": -0.007595132914826053
+  },
+  "promotion_performed": false,
+  "note": "This is a fixed random holdout, not a future-time holdout. The delayed arrival and label timing are simulated."
+}

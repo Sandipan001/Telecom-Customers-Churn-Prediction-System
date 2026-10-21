@@ -1,0 +1,15 @@
+{
+    "selection_method": "minimum_validation_business_cost",
+    "selected_threshold": 0.06,
+    "validation_total_cost": 9000.0,
+    "validation_cost_per_customer": 6.387508871540099,
+    "business_assumptions": {
+        "false_negative_cost": 200,
+        "retention_offer_cost": 25,
+        "successful_retention_benefit": 100,
+        "retention_success_rate": 0.5
+    },
+    "validation_customers": 1409,
+    "active_model_threshold": 0.35,
+    "active_threshold_changed": false
+}

@@ -1,0 +1,9 @@
+[
+    {
+        "timestamp": "2026-10-18T22:49:48.348597+00:00",
+        "previous_threshold": 0.35,
+        "proposed_threshold": 0.06,
+        "validation_business_cost": 9000.0,
+        "status": "pending_approval"
+    }
+]

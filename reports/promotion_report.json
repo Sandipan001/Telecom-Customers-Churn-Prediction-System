@@ -1,0 +1,16 @@
+{
+  "timestamp": "2026-10-18T23:05:50.969609+00:00",
+  "candidate_model": "Logistic Regression",
+  "champion_threshold": 0.35,
+  "candidate_threshold": 0.16,
+  "validation_business_cost": 8925.0,
+  "champion_holdout_business_cost": 20500.0,
+  "candidate_holdout_business_cost": 8150.0,
+  "champion_holdout_roc_auc": 0.8430261696246352,
+  "candidate_holdout_roc_auc": 0.8428014156914413,
+  "cost_improved": true,
+  "roc_auc_guardrail_passed": true,
+  "promotion_approved": true,
+  "status": "promoted",
+  "model_version": "20261018_230550"
+}

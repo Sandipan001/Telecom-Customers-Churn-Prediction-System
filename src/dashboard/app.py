@@ -1,10 +1,13 @@
-
+import joblib
+import numpy as np
+import shap
 import json
 import pandas as pd
 import streamlit as st
 from pathlib import Path
 
 
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 project_root = Path(__file__).resolve().parents[2]
 metadata_path = project_root / "models" / "model_metadata.json"
 prediction_log_path = project_root / "logs" / "predictions.csv"
@@ -179,3 +182,194 @@ if drift_alert_path.exists():
         st.success("No high-PSI alerts recorded.")
 else:
     st.info("No drift alerts have been recorded.")
+
+
+
+cost_report_path = PROJECT_ROOT / "reports" / "cost_thresholds.csv"
+
+st.subheader("Business Cost vs Decision Threshold")
+
+if cost_report_path.exists():
+    cost_df = pd.read_csv(cost_report_path)
+
+    if not cost_df.empty:
+        cost_df = cost_df.sort_values("threshold")
+        best_row = cost_df.loc[cost_df["total_cost"].idxmin()]
+
+        st.metric(
+            "Lowest-Cost Threshold",
+            f"{best_row['threshold']:.2f}",
+            f"Modeled cost: {best_row['total_cost']:,.0f}",
+        )
+
+        chart_df = cost_df.set_index("threshold")[["total_cost"]]
+        st.line_chart(chart_df)
+
+        st.caption(
+            "Costs are estimated using the configured business assumptions "
+            "and validation data. The selected threshold is not automatically "
+            "applied to the active API model."
+        )
+
+        st.dataframe(
+            cost_df[
+                [
+                    "threshold",
+                    "total_cost",
+                    "cost_per_customer",
+                    "false_negatives",
+                    "false_positives",
+                    "true_positives",
+                    "offers_sent",
+                ]
+            ].sort_values("total_cost").head(10),
+            use_container_width=True,
+        )
+    else:
+        st.info("The cost-threshold report is empty. Run the evaluation script first.")
+else:
+    st.info("Cost-threshold report not found. Run the evaluation script first.")
+
+
+
+# ---------------------------------------------------------
+# Customer-level SHAP Explainability
+# ---------------------------------------------------------
+
+st.divider()
+st.header("Customer-Level Churn Explanation")
+
+model_path = PROJECT_ROOT / "models" / "churn_model.joblib"
+customer_data_path = (
+    PROJECT_ROOT / "data" / "processed" / "cleaned_data.csv"
+)
+
+if not model_path.exists() or not customer_data_path.exists():
+    st.info(
+        "The model or cleaned dataset is missing. "
+        "Train the model and prepare the dataset first."
+    )
+else:
+    @st.cache_resource
+    def load_explanation_model(path):
+        return joblib.load(path)
+
+    @st.cache_data
+    def load_customer_data(path):
+        return pd.read_csv(path)
+
+    model = load_explanation_model(str(model_path))
+    customer_data = load_customer_data(str(customer_data_path))
+
+    feature_columns = [
+        column
+        for column in customer_data.columns
+        if column not in {"Churn", "customerID"}
+    ]
+
+    X_customers = customer_data[feature_columns].copy()
+
+    selected_row = st.number_input(
+        "Select customer row",
+        min_value=0,
+        max_value=len(X_customers) - 1,
+        value=0,
+        step=1,
+        help="Select a row from the cleaned dataset for demonstration.",
+    )
+
+    customer = X_customers.iloc[[int(selected_row)]]
+
+    probability = float(model.predict_proba(customer)[0, 1])
+    active_threshold = float(
+        metadata.get("decision_threshold", 0.5)
+    )
+    predicted_churn = probability >= active_threshold
+
+    metric_col1, metric_col2, metric_col3 = st.columns(3)
+
+    metric_col1.metric(
+        "Churn Probability",
+        f"{probability:.1%}",
+    )
+    metric_col2.metric(
+        "Active Threshold",
+        f"{active_threshold:.1%}",
+    )
+    metric_col3.metric(
+        "Prediction",
+        "Likely to churn" if predicted_churn else "Unlikely to churn",
+    )
+
+    st.caption(
+        "This prediction uses the active champion model. "
+        "The selected row is a demonstration customer from the cleaned dataset."
+    )
+
+    if st.button("Explain selected customer"):
+        try:
+            preprocessor = model.named_steps["preprocessor"]
+            classifier = model.named_steps["classifier"]
+
+            background = X_customers.sample(
+                n=min(100, len(X_customers)),
+                random_state=42,
+            )
+
+            transformed_background = preprocessor.transform(background)
+            transformed_customer = preprocessor.transform(customer)
+
+            feature_names = preprocessor.get_feature_names_out()
+
+            explainer = shap.LinearExplainer(
+                classifier,
+                transformed_background,
+            )
+
+            shap_values = np.asarray(
+                explainer.shap_values(transformed_customer)
+            ).reshape(-1)
+
+            explanation_df = pd.DataFrame({
+                "Feature": feature_names,
+                "SHAP value (log-odds)": shap_values,
+            })
+
+            explanation_df["Direction"] = np.where(
+                explanation_df["SHAP value (log-odds)"] >= 0,
+                "Pushes toward churn",
+                "Pushes away from churn",
+            )
+
+            explanation_df["Absolute impact"] = (
+                explanation_df["SHAP value (log-odds)"].abs()
+            )
+
+            explanation_df = explanation_df.sort_values(
+                "Absolute impact",
+                ascending=False,
+            ).head(10)
+
+            st.subheader("Top 10 Feature Contributions")
+
+            chart_df = explanation_df.set_index("Feature")[
+                ["SHAP value (log-odds)"]
+            ]
+
+            st.bar_chart(chart_df)
+
+            st.dataframe(
+                explanation_df[
+                    ["Feature", "SHAP value (log-odds)", "Direction"]
+                ],
+                use_container_width=True,
+            )
+
+            st.caption(
+                "Positive SHAP values push the model's log-odds toward "
+                "churn; negative values push away from churn. These are "
+                "model contributions, not proof of causation."
+            )
+
+        except Exception as exc:
+            st.error(f"Could not generate the SHAP explanation: {exc}")

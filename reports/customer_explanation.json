@@ -1,0 +1,63 @@
+{
+  "customer_row_index": 0,
+  "actual_churn_label": "No",
+  "predicted_churn_probability": 0.6226506030703095,
+  "decision_threshold": 0.35,
+  "predicted_churn": true,
+  "model_version": "unversioned",
+  "explanation_method": "SHAP LinearExplainer",
+  "feature_space": "Preprocessed model features",
+  "top_contributors": [
+    {
+      "feature": "numeric__tenure",
+      "shap_value": 1.7673425811608272,
+      "direction": "pushes toward churn"
+    },
+    {
+      "feature": "numeric__TotalCharges",
+      "shap_value": -0.6320781154408693,
+      "direction": "pushes away from churn"
+    },
+    {
+      "feature": "categorical__InternetService_DSL",
+      "shap_value": -0.42498402539407054,
+      "direction": "pushes away from churn"
+    },
+    {
+      "feature": "numeric__MonthlyCharges",
+      "shap_value": 0.4032206754747165,
+      "direction": "pushes toward churn"
+    },
+    {
+      "feature": "categorical__Contract_Month-to-month",
+      "shap_value": 0.2769953396805381,
+      "direction": "pushes toward churn"
+    },
+    {
+      "feature": "categorical__InternetService_Fiber optic",
+      "shap_value": -0.2680085759840837,
+      "direction": "pushes away from churn"
+    },
+    {
+      "feature": "categorical__PhoneService_Yes",
+      "shap_value": 0.23125243096755524,
+      "direction": "pushes toward churn"
+    },
+    {
+      "feature": "categorical__Contract_Two year",
+      "shap_value": 0.22643026558375526,
+      "direction": "pushes toward churn"
+    },
+    {
+      "feature": "categorical__MultipleLines_No",
+      "shap_value": 0.1614796128971073,
+      "direction": "pushes toward churn"
+    },
+    {
+      "feature": "categorical__StreamingTV_No",
+      "shap_value": -0.1295435949464168,
+      "direction": "pushes away from churn"
+    }
+  ],
+  "note": "SHAP values explain the model output in its transformed feature space. They indicate model contribution, not causation."
+}

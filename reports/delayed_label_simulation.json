@@ -1,0 +1,11 @@
+{
+  "simulation_type": "synthetic_delayed_label_simulation",
+  "random_seed": 42,
+  "holdout_size": 0.2,
+  "batch_size": 500,
+  "label_delay_batches": 2,
+  "stream_customers": 5634,
+  "holdout_customers": 1409,
+  "total_arrival_batches": 12,
+  "note": "Customer arrival and label delays are simulated. The fixed holdout is excluded from the training stream. The source dataset has no real event timestamps."
+}

@@ -1,0 +1,13 @@
+{
+  "simulation_type": "synthetic_delayed_label_simulation",
+  "training_batch": 5,
+  "customers_arrived_by_batch": 2500,
+  "customers_with_available_labels": 1500,
+  "training_positive_labels": 380,
+  "training_negative_labels": 1120,
+  "feature_count": 19,
+  "holdout_path": "data/processed/delayed_label_holdout.csv",
+  "holdout_used_for_training": false,
+  "label_source": "revealed_churn_label",
+  "model_path": "models\\delayed_label_candidate.joblib"
+}
